@@ -83,6 +83,16 @@ void test_draw_circle(TestObjs *objs);
 void test_draw_circle_clip(TestObjs *objs);
 void test_draw_tile(TestObjs *objs);
 void test_draw_sprite(TestObjs *objs);
+void test_in_bounds(TestObjs *objs);
+void test_compute_index(TestObjs *objs);
+void test_clamp(TestObjs *objs);
+void test_get_r();
+void test_get_g();
+void test_get_b();
+void test_get_a();
+void test_blend_colors();
+void test_square();
+void test_square_dist();
 
 int main(int argc, char **argv) {
   if (argc > 1) {
@@ -99,6 +109,16 @@ int main(int argc, char **argv) {
   TEST(test_draw_circle_clip);
   TEST(test_draw_tile);
   TEST(test_draw_sprite);
+  TEST(test_in_bounds);
+  TEST(test_compute_index);
+  TEST(test_clamp);
+  TEST(test_get_r);
+  TEST(test_get_g);
+  TEST(test_get_b);
+  TEST(test_get_a);
+  TEST(test_blend_colors);
+  TEST(test_square);
+  TEST(test_square_dist);
 
   TEST_FINI();
 }
@@ -261,4 +281,66 @@ void test_draw_sprite(TestObjs *objs) {
   };
 
   check_picture(&objs->large, &pic);
+}
+
+void test_in_bounds(TestObjs *objs) {
+  //width 24, height 20
+  // in bounds
+  ASSERT(in_bounds(&objs->large, 4, 4));
+  // x out of bounds
+  ASSERT(!in_bounds(&objs->large, -4, 4));
+  // y out of bounds
+  ASSERT(!in_bounds(&objs->large, 4, 24));
+  // x,y out of bounds
+  ASSERT(!in_bounds(&objs->large, 24, -4));
+}
+
+void test_compute_index(TestObjs *objs) {
+  //width 24, height 20
+  //x, y in image
+  ASSERT(100 == compute_index(&objs->large, 4, 4));
+  //x, y not in image
+  ASSERT(-1 == compute_index(&objs->large, 24, -4));
+}
+
+void test_clamp(TestObjs *objs) {
+  //width 24, height 20
+  //clamp to max
+  ASSERT(5 == clamp(10, 0, 5));
+  //clamp to min
+  ASSERT(0 == clamp(-1, 0, 5));
+  //no clamp
+  ASSERT(5 == clamp(5, 0, 10));
+}
+
+void test_get_r(){
+  uint32_t color = 0xAABBCCDD;
+  ASSERT(0xAA == get_r(color));
+}
+void test_get_g(){
+  uint32_t color = 0xAABBCCDD;
+  ASSERT(0xBB == get_g(color));
+}
+void test_get_b(){
+  uint32_t color = 0xAABBCCDD;
+  ASSERT(0xCC == get_b(color));
+}
+void test_get_a(){
+  uint32_t color = 0xAABBCCDD;
+  ASSERT(0xDD == get_a(color));
+}
+
+void test_blend_colors() {
+  ASSERT(0x748596FF == blend_colors(0x55667788, 0x99AABBCC));
+}
+
+void test_square() {
+  ASSERT(4 == square(2));
+  ASSERT(4 == square(-2));
+  ASSERT(0 == square(0));
+}
+
+void test_square_dist() {
+  ASSERT(25 == square_dist(0, 0, 3, 4)); 
+  ASSERT(25 == square_dist(-3, -4, 0, 0));
 }
